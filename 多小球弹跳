@@ -1,0 +1,94 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include <windows.h>
+int i;int j;int k;int l;
+void HideCursor()//隐藏光标函数
+{
+	CONSOLE_CURSOR_INFO cursor_info = { 1,0 };//第二个值为0表示隐藏光标
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursor_info);
+}
+void gotoxy(int x, int y)//光标移动函数，可以让光标移动到指定位置
+{
+	COORD c;
+	c.X = x;
+	c.Y = y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
+}
+void wall()//边框
+{
+	printf("      #########################################\n");//顶部边界
+
+	for (k = 0;k < 25;k++)
+	{
+		printf("  [[ |                                        | ]] \n");//左边和右边边界
+
+	}
+	printf("      ########################################");//底部边界
+
+}
+int main()
+{
+	int move_x[10] = { 1,1,1,1,1,1,1,1,1,1 };//一维数组，每一个元素的值为1
+	int move_y[10] = { 1,1,1,1,1,1,1,1,1,1 };
+	int x[10] = { 7,8,9,10,15,12,13,14,15,16 };//每个小球的横坐标初始位置
+	int y[10] = { 13,12,11,10,9,8,7,6,5,4};//每个小球的纵坐标初始位置
+	int Right = 44;
+	int Left = 6;
+	int Top = 1;
+	int Bottom = 25;
+	HideCursor();//隐藏光标函数
+	while (1)
+	{
+		for (i = 0;i < 10;i++)//i表示数组的第i+1个元素，假设i=0，则x[0]=7,y[0]=12
+		{
+			
+			gotoxy(x[i], y[i]);//光标的位置
+			for (k = 0;k < 10;k++)
+			{
+				for (l = 9;l > 0;l--)
+				{
+					if (k < l)
+					{  
+						if (x[k] > 7 && y[k] > 2 && x[k]<44 && y[k]<24)
+						{
+							if (x[k] == x[l] && y[k] == y[l])
+							{  
+								if(move_x[k]== move_x[l])
+							    {
+								    move_y[k] = -move_y[k];
+								    move_y[l] = -move_y[l];
+							    }	
+							
+								if(move_y[k] == move_y[l])
+								{
+									move_x[k] = -move_x[k];
+									move_x[l] = -move_x[l];
+								}
+						
+								else
+								{
+									move_x[k] = -move_x[k];
+									move_x[l] = -move_x[l];
+									move_y[k] = -move_y[k];
+									move_y[l] = -move_y[l];
+								}
+							}
+						}
+					}
+						else break;
+				}
+
+			}
+			if (x[i] == Right || x[i] == Left) move_x[i] = - move_x[i];//碰到边界反弹
+			x[i] = x[i] + move_x[i];
+			if (y[i] == Bottom || y[i] == Top) move_y[i] = - move_y[i];//碰到边界反弹
+			y[i] = y[i] + move_y[i];
+			
+			printf("●\n");//打印小球
+		}
+		Sleep(100);
+		system("cls");//清屏
+		wall();//打印边框
+	}		
+
+}
